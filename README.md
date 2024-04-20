@@ -2,11 +2,10 @@
 
 This is the PyTorch implementation of pruning neural networks based on the weighted PageRank centrality measure as introduced by my thesis:
 
-**MLP-Rank: A Graph Theoretical Approach to Pruning Deep Neural Networks** \
-Amazon Web Services - AI Research and Education \
-Author: David B. Hoffmann \
-Advisor: Dr. Kailash Budhathoki, Dr. Matthäus Kleindessner \
-[Arxiv Paper](add/link/to/paper.de) 
+> **MLP-Rank: A Graph Theoretical Approach to Pruning Deep Neural Networks** \
+> Amazon Web Services - AI Research and Education \
+> Author: David B. Hoffmann \
+> Advisor: Dr. Kailash Budhathoki, Dr. Matthäus Kleindessner \
 
 ```bibtex
 @mastersthesis{hoffmann2024mlprank,
