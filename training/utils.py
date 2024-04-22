@@ -185,7 +185,7 @@ class MetricLogger:
                 eta_seconds = iter_time.global_avg * (len(iterable) - i)
                 eta_string = str(datetime.timedelta(seconds=int(eta_seconds)))
                 if torch.cuda.is_available():
-                    tune_log(
+                    tune_log.info(
                         log_msg.format(
                             i,
                             len(iterable),
@@ -197,7 +197,7 @@ class MetricLogger:
                         )
                     )
                 else:
-                    tune_log(
+                    tune_log.info(
                         log_msg.format(
                             i,
                             len(iterable),
@@ -211,7 +211,7 @@ class MetricLogger:
             end = time.time()
         total_time = time.time() - start_time
         total_time_str = str(datetime.timedelta(seconds=int(total_time)))
-        tune_log(f"{header} Total time: {total_time_str}")
+        tune_log.info(f"{header} Total time: {total_time_str}")
 
 
 class ExponentialMovingAverage(torch.optim.swa_utils.AveragedModel):
@@ -321,9 +321,7 @@ def init_distributed_mode(args):
 
     torch.cuda.set_device(args.gpu)
     args.dist_backend = "nccl"
-    tune_log.info(
-        f"| distributed init (rank {args.rank}): {args.dist_url}", flush=True
-    )
+    tune_log.info(f"| distributed init (rank {args.rank}): {args.dist_url}")
     torch.distributed.init_process_group(
         backend=args.dist_backend,
         init_method=args.dist_url,

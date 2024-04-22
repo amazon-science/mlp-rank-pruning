@@ -94,7 +94,7 @@ def main(args):
         single_training = False
     for lr in args.lr_grid:
         for weight_decay in args.wd_grid:
-            tune_log(f"Train for lr={lr} and wd={weight_decay}")
+            tune_log.info(f"Train for lr={lr} and wd={weight_decay}")
             args.weight_decay = weight_decay
             args.lr = lr
             train_acc1, train_acc5, test_acc1, test_acc5 = train_one_model(
@@ -140,8 +140,8 @@ def main(args):
     total_tuning_time_str = str(
         datetime.timedelta(seconds=int(total_tuning_time))
     )
-    tune_log(f"Tuning time: {total_tuning_time_str}")
-    tune_log("Done!!!")
+    tune_log.info(f"Tuning time: {total_tuning_time_str}")
+    tune_log.info("Done!!!")
 
 
 def train_one_epoch(
@@ -312,7 +312,7 @@ def evaluate(
         )
 
     metric_logger.synchronize_between_processes()
-    tune_log(
+    tune_log.info(
         (
             f"{header} Acc@1 {metric_logger.acc1.global_avg:.3f}"
             f"Acc@5 {metric_logger.acc5.global_avg:.3f}"
@@ -472,7 +472,7 @@ def train_one_model(args, single_training):
         pin_memory=True,
     )
 
-    tune_log("Creating model")
+    tune_log.info("Creating model")
     model = registry.MLP_MODEL[args.model_name]["wrapper"]()
     model.to(device)
 
@@ -640,7 +640,7 @@ def train_one_model(args, single_training):
             )
         return
 
-    tune_log("Start training")
+    tune_log.info("Start training")
     start_time = time.time()
     for epoch in range(args.start_epoch, args.epochs):
         if args.distributed:
@@ -699,7 +699,7 @@ def train_one_model(args, single_training):
 
     total_time = time.time() - start_time
     total_time_str = str(datetime.timedelta(seconds=int(total_time)))
-    tune_log(f"Training time {total_time_str}")
+    tune_log.info(f"Training time {total_time_str}")
     if single_training and args.wandb:
         wandb.finish()
     return train_acc1, train_acc5, test_acc1, test_acc5
