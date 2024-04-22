@@ -313,7 +313,7 @@ def init_distributed_mode(args):
     elif hasattr(args, "rank"):
         pass
     else:
-        tune_log("Not using distributed mode")
+        tune_log.info("Not using distributed mode")
         args.distributed = False
         return
 
@@ -321,7 +321,7 @@ def init_distributed_mode(args):
 
     torch.cuda.set_device(args.gpu)
     args.dist_backend = "nccl"
-    tune_log(
+    tune_log.info(
         f"| distributed init (rank {args.rank}): {args.dist_url}", flush=True
     )
     torch.distributed.init_process_group(
