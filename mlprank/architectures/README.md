@@ -19,7 +19,8 @@ To add a new model based on a simple MLP architecture, follow the steps below:
 3. Add the dataset the model was trained on to the `DATASETS` dictionary in  `registry.py` with the following structure: `"<DataName>:{"wrapper":<datasets.DataClass>, "path": <path/to/local/dataset>}`.
 4. Train the model as described in the [Tuning and Training MLP Models](https://gitlab.aws.dev/adavidho/mlp-rank-pruning/-/blob/main/training/README.md?ref_type=heads) documentation.
 5. Add the path to trained model weights as an attribute to the `MLP_MODEL` dictionary in `registry.py` with the following structure: `"path": <path/to/model/checkpoint.pth>`.
-6. Lastly, add an entry to `MODEL_DATA` mapping the model name to the name of the dataset it was trained on as they were referenced in `MLP_MODEL` and `DATASETS` respectively.
+6. Make sure you already create the folder structure as specified in `registry.py` such that data and models can be saved there.
+7. Lastly, add an entry to `MODEL_DATA` mapping the model name to the name of the dataset it was trained on as they were referenced in `MLP_MODEL` and `DATASETS` respectively.
 
 ## Adding a Scoring Function
 
