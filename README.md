@@ -18,7 +18,7 @@ This is the PyTorch implementation of pruning neural networks based on the weigh
 
 ## Setup
 
-To setup mlp-rank-pruning, clone the repository and install it locally with `pip install -e .`
+To setup mlp-rank-pruning, clone the repository and install it locally with `pip install -e .`.
 
 ## How To Use
 
