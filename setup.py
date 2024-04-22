@@ -27,6 +27,7 @@ setup(
         "numpy ~= 1.26.4",
         "torch ~= 2.2.1",
         "torchvision ~= 0.17.1",
+        "wandb ~= 0.16.4",
     ],
     python_requires=">=3.10",
 )
