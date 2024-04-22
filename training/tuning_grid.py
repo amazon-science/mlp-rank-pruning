@@ -106,7 +106,7 @@ def main(args):
                 "test_acc1": test_acc1,
                 "test_acc5": test_acc5,
             }
-            if not single_training:
+            if not single_training and args.wandb:
                 wandb.init(
                     # Set the project where this run will be logged
                     project="MLP-Tuning",
@@ -155,6 +155,7 @@ def train_one_epoch(
     model_ema=None,
     scaler=None,
     single_training=False,
+    wandb_log=False,
 ):
     """
     Trains the neural network model for one epoch and returns the accuracy.
@@ -232,7 +233,7 @@ def train_one_epoch(
         metric_logger.meters["img/s"].update(
             batch_size / (time.time() - start_time)
         )
-        if i % 100 == 0 and single_training:
+        if i % 100 == 0 and single_training and wandb_log:
             wandb.log(
                 {"acc1": acc1.item(), "acc5": acc5.item(), "loss": loss.item()}
             )
@@ -247,6 +248,7 @@ def evaluate(
     print_freq=100,
     log_suffix="",
     single_training=False,
+    wandb_log=False,
 ):
     """
     Evaluates the neural network model.
@@ -316,7 +318,7 @@ def evaluate(
             f"Acc@5 {metric_logger.acc5.global_avg:.3f}"
         )
     )
-    if single_training:
+    if single_training and wandb_log:
         wandb.log(
             {
                 "val_acc1": metric_logger.acc1.global_avg,
@@ -413,7 +415,7 @@ def train_one_model(args, single_training):
     Returns:
         tuple: A tuple containing training and testing accuracies.
     """
-    if single_training:
+    if single_training and args.wandb:
         experiment_name = f"Training-{args.model_name}-{args.data_name}"
         run = wandb.init(
             # Set the project where this run will be logged
@@ -626,9 +628,16 @@ def train_one_model(args, single_training):
                 data_loader_test,
                 device=device,
                 log_suffix="EMA",
+                wandb_log=args.wandb,
             )
         else:
-            evaluate(model, criterion, data_loader_test, device=device)
+            evaluate(
+                model,
+                criterion,
+                data_loader_test,
+                device=device,
+                wandb_log=args.wandb,
+            )
         return
 
     tune_log("Start training")
@@ -647,6 +656,7 @@ def train_one_model(args, single_training):
             model_ema,
             scaler,
             single_training,
+            wandb_log=args.wandb,
         )
         lr_scheduler.step()
         test_acc1, test_acc5 = evaluate(
@@ -655,6 +665,7 @@ def train_one_model(args, single_training):
             data_loader_test,
             device=device,
             single_training=single_training,
+            wandb_log=args.wandb,
         )
         if model_ema:
             evaluate(
@@ -663,6 +674,7 @@ def train_one_model(args, single_training):
                 data_loader_test,
                 device=device,
                 log_suffix="EMA",
+                wandb_log=args.wandb,
             )
         if args.output_dir:
             checkpoint = {
@@ -688,7 +700,7 @@ def train_one_model(args, single_training):
     total_time = time.time() - start_time
     total_time_str = str(datetime.timedelta(seconds=int(total_time)))
     tune_log(f"Training time {total_time_str}")
-    if single_training:
+    if single_training and args.wandb:
         wandb.finish()
     return train_acc1, train_acc5, test_acc1, test_acc5
 
@@ -698,6 +710,9 @@ def get_args_parser(add_help=True):
         description="PyTorch Classification Training", add_help=add_help
     )
     # CLI Arguments
+    parser.add_argument(
+        "--wandb", default=False, action=argparse.BooleanOptionalAction
+    )
     parser.add_argument(
         "--data-name", default="FashionMNIST", type=str, help="dataset name"
     )
